@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { WebWorkerService } from './services/web-worker.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app works!';
+
+  constructor(webWorkerService: WebWorkerService) {
+    webWorkerService.initialize();
+  }
 }

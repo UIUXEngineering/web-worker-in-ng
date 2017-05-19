@@ -1,28 +1,41 @@
-# WebWorkerInNg
+# Web Worker In Angular 4
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.4.
+This is a proof of concept to load web workers insides of an Angular 4 framework. **This is NOT loading Angular inside of a Web Worker**.
+
+When running the app, open your console to see logs. I didn't develop fancy schmancy UI work. I just wanted to load and build the web workers in an Angular project. PR's welcome.
+
+The project loads TWO web workers. One that is simple without dependencies, one with dependencies from node_modules and app internal.
+
+Webpack is used to transpile the Web Workers to `.js`. The Webpack plugin `worker-loader` is used to load the workers into Angular.
+
+The custom `webpack.worker.config.js` transpiles the workers ( this project is not ng ejected ). Note the entry points to how the workers 
+are transpile to the same location as their `ts` counterparts.
+
+## Issues Researched
+  - [How to work with web workers (use a web worker IN cli project)](https://github.com/angular/angular-cli/issues/5885)
+  - [The need for multiple output paths?](https://github.com/webpack/webpack/issues/1189)
+  - [TS2351 'new' doesn't work when .d.ts is installed via typings?](https://github.com/typings/typings/issues/486)
+  
+## Research
+  - [webpack sample](https://github.com/webpack/webpack/tree/master/examples/web-worker)
+
+
+## Transpile the web workers manually
+
+Run `npm run worker` or `yarn worker`.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+Run `npm run start` or `yarn start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run `npm run build` or `yarn build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+I did not implement unit tests on the web workers. PR's welecome.
 
-## Running end-to-end tests
+## PR's
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+PR's welcome if you find this proof of concept useful and want to enhance.
