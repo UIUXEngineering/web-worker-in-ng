@@ -15,6 +15,10 @@ const customPostMessage: any = postMessage;
 let jasmineSpecPostMessageCallback: any = null;
 let jasmineSpecIsInBrowser: boolean;
 
+// Strange try / catch couple with boolean logic is to
+// suppress errors in both teh worker and browser contexts.
+// Worker throws an error for window being undefined.
+// TypeScript throws errors for compiling worker.
 try {
   jasmineSpecIsInBrowser = ( window !== undefined );
 } catch (e) {
