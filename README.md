@@ -11,6 +11,16 @@ Webpack is used to transpile the Web Workers to `.js`. The Webpack plugin `worke
 The custom `webpack.worker.config.js` transpiles the workers ( this project is not ng ejected ). Note the entry points to how the workers 
 are transpile to the same location as their `ts` counterparts.
 
+## Unit Tests
+
+I attempted running unit tests using the web worker API ( load as a web worker ) and running 
+in the same context as jasmine to no avail. The most successful ( and useful ) method is importing 
+the web worker like any other file. I created a jasmine API and Worker API to accommodate a Worker 
+context for production and browser context for tests.
+
+For my own workers, I will be using demo 2 because I like the separation of the processing code from 
+the worker and jasmine API. Webpack bundles the worker, so all is good.
+
 ## Issues Researched
   - [How to work with web workers (use a web worker IN cli project)](https://github.com/angular/angular-cli/issues/5885)
   - [The need for multiple output paths?](https://github.com/webpack/webpack/issues/1189)

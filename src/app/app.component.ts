@@ -9,7 +9,7 @@ import { WebWorkerService } from './services/web-worker.service';
 export class AppComponent {
   title = 'app works!';
 
-  constructor(webWorkerService: WebWorkerService) {
+  constructor(private webWorkerService: WebWorkerService) {
     webWorkerService.initialize();
   }
 }

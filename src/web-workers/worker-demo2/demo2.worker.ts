@@ -1,16 +1,50 @@
-console.log('Web Worker TWO Loaded.');
-import * as _ from 'lodash';
-import { someDependency } from './someDependency';
+/**
+ * Worker processing code is externalized
+ * so only see the Worker API in this file.
+ */
+import { workerProcessor } from './demo2.worker.processor';
 
+// prevent TypeScript compile error
 const customPostMessage: any = postMessage;
-const data: any[] = [1, 2, 3, 4, 5];
 
-onmessage = function(event) {
-  console.log('Web Worker TWO: Message received from main script');
-  console.log('Web Worker TWO: Posting message back to main script');
+// Jasmine API
+// The postMessage method has a different signature
+// in the browser than in a worker.
+// Supply a custom postMessage callback method to
+// prevent TypeScript data type errors.
+let jasmineSpecPostMessageCallback: any = null;
+let jasmineSpecIsInBrowser: boolean;
 
-  _.each(data, (item) => {
-    const workerResult: string =  'Result: ' + event.data + ' with ' + someDependency + ' iterated ' + item;
-    customPostMessage(workerResult);
+try {
+  jasmineSpecIsInBrowser = ( window !== undefined );
+} catch (e) {
+  jasmineSpecIsInBrowser = false; // We are a web worker!
+}
+
+// Worker API
+onmessage = function ( event: any ) {
+
+  workerProcessor(event, ( _result: any ) => {
+
+    const result: string = ( typeof _result !== 'string') ? JSON.stringify(_result) : _result;
+
+    if (jasmineSpecIsInBrowser) { // For jasmine tests running in browser
+      if (!jasmineSpecPostMessageCallback) {
+        throw Error('Need postMessage callback to run jasmine specs');
+      } else {
+        jasmineSpecPostMessageCallback(result);
+      }
+    } else { // running in worker
+      customPostMessage(result);
+    }
   });
+
+};
+
+// Jasmine Spec API
+export const jasmineSpecWorkerAPI: any = {
+  onmessage: onmessage,
+  postMessage: ( cb: any ) => {
+    jasmineSpecPostMessageCallback = cb;
+  }
 };

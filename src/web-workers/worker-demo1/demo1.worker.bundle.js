@@ -69,16 +69,51 @@
 /******/ ({
 
 /***/ 0:
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "jasmineSpecWorkerAPI", function() { return jasmineSpecWorkerAPI; });
 console.log('Web Worker ONE Loaded.');
-// prevent TypeScript errors
+// prevent TypeScript compile error
 var customPostMessage = postMessage;
+// Jasmine API
+// The postMessage method has a different signature
+// in the browser than in a worker.
+// Supply a custom postMessage callback method to
+// prevent TypeScript data type errors.
+var jasmineSpecPostMessageCallback = null;
+var jasmineSpecIsInBrowser;
+try {
+    jasmineSpecIsInBrowser = (window !== undefined);
+}
+catch (e) {
+    jasmineSpecIsInBrowser = false; // We are a web worker!
+}
+// Worker API
 onmessage = function (event) {
+    // worker data process
     console.log('Web Worker ONE: Message received from main script');
     console.log('Web Worker ONE: Posting message back to main script');
     var workerResult = 'Result: ' + event.data + ' in Worker';
-    customPostMessage(workerResult);
+    if (jasmineSpecIsInBrowser) {
+        if (!jasmineSpecPostMessageCallback) {
+            throw Error('Need postMessage callback to run jasmine specs');
+        }
+        else {
+            jasmineSpecPostMessageCallback(workerResult);
+        }
+    }
+    else {
+        customPostMessage(workerResult);
+    }
+};
+// Jasmine API
+var jasmineSpecWorkerAPI = {
+    onmessage: onmessage,
+    postMessage: function (cb) {
+        jasmineSpecPostMessageCallback = cb;
+    }
 };
 //# sourceMappingURL=demo1.worker.js.map
 

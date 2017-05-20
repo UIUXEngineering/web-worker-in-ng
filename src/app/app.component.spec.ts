@@ -1,32 +1,54 @@
 import { TestBed, async } from '@angular/core/testing';
-
 import { AppComponent } from './app.component';
+import { WebWorkerService } from './services/web-worker.service';
+
+
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+
+  let webWorkersServiceSpy;
+  let mockWebWorkerService;
+
+  beforeEach(() => {
+
+    mockWebWorkerService = new WebWorkerService();
+
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
       ],
-    }).compileComponents();
-  }));
+      providers: [
+        // WebWorkerService
+        { provide: WebWorkerService, useValue: mockWebWorkerService }
+      ]
+    });
 
-  it('should create the app', async(() => {
+    TestBed.overrideComponent(AppComponent, {
+      set: {
+        template: '<div>Override Template</div>'
+      }
+    });
+
+    webWorkersServiceSpy = spyOn(mockWebWorkerService, 'initialize');
+
+    TestBed.compileComponents();
+  });
+
+  afterEach(() => {
+    webWorkersServiceSpy = null;
+    mockWebWorkerService = null;
+  });
+
+  it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
-  }));
+  });
 
   it(`should have as title 'app works!'`, async(() => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('app works!');
+    // const app = fixture.debugElement.componentInstance;
+    expect(mockWebWorkerService.initialize).toHaveBeenCalled();
   }));
 
-  it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('app works!');
-  }));
 });

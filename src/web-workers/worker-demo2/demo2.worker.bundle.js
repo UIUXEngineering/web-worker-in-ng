@@ -73,21 +73,51 @@
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__someDependency__ = __webpack_require__(2);
-console.log('Web Worker TWO Loaded.');
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "jasmineSpecWorkerAPI", function() { return jasmineSpecWorkerAPI; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__demo2_worker_processor__ = __webpack_require__(2);
+/**
+ * Worker processing code is externalized
+ * so only see the Worker API in this file.
+ */
 
-
+// prevent TypeScript compile error
 var customPostMessage = postMessage;
-var data = [1, 2, 3, 4, 5];
+// Jasmine API
+// The postMessage method has a different signature
+// in the browser than in a worker.
+// Supply a custom postMessage callback method to
+// prevent TypeScript data type errors.
+var jasmineSpecPostMessageCallback = null;
+var jasmineSpecIsInBrowser;
+try {
+    jasmineSpecIsInBrowser = (window !== undefined);
+}
+catch (e) {
+    jasmineSpecIsInBrowser = false; // We are a web worker!
+}
+// Worker API
 onmessage = function (event) {
-    console.log('Web Worker TWO: Message received from main script');
-    console.log('Web Worker TWO: Posting message back to main script');
-    __WEBPACK_IMPORTED_MODULE_0_lodash__["each"](data, function (item) {
-        var workerResult = 'Result: ' + event.data + ' with ' + __WEBPACK_IMPORTED_MODULE_1__someDependency__["a" /* someDependency */] + ' iterated ' + item;
-        customPostMessage(workerResult);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__demo2_worker_processor__["a" /* workerProcessor */])(event, function (_result) {
+        var result = (typeof _result !== 'string') ? JSON.stringify(_result) : _result;
+        if (jasmineSpecIsInBrowser) {
+            if (!jasmineSpecPostMessageCallback) {
+                throw Error('Need postMessage callback to run jasmine specs');
+            }
+            else {
+                jasmineSpecPostMessageCallback(result);
+            }
+        }
+        else {
+            customPostMessage(result);
+        }
     });
+};
+// Jasmine Spec API
+var jasmineSpecWorkerAPI = {
+    onmessage: onmessage,
+    postMessage: function (cb) {
+        jasmineSpecPostMessageCallback = cb;
+    }
 };
 //# sourceMappingURL=demo2.worker.js.map
 
@@ -96,9 +126,21 @@ onmessage = function (event) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return someDependency; });
-var someDependency = 'some dependency';
-//# sourceMappingURL=someDependency.js.map
+/* harmony export (immutable) */ __webpack_exports__["a"] = workerProcessor;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+console.log('Web Worker TWO Loaded.');
+
+var data = [1, 2, 3, 4, 5];
+function workerProcessor(event, done) {
+    console.log('Web Worker TWO: Message received from main script');
+    console.log('Web Worker TWO: Posting message back to main script');
+    __WEBPACK_IMPORTED_MODULE_0_lodash__["each"](data, function (item) {
+        var workerResult = 'Result: ' + event.data + ' iterated with imported lodash ' + item;
+        done(workerResult);
+    });
+}
+//# sourceMappingURL=demo2.worker.processor.js.map
 
 /***/ }),
 /* 3 */
