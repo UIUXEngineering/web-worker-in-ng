@@ -89,6 +89,10 @@ var customPostMessage = postMessage;
 // prevent TypeScript data type errors.
 var jasmineSpecPostMessageCallback = null;
 var jasmineSpecIsInBrowser;
+// Strange try / catch couple with boolean logic is to
+// suppress errors in both teh worker and browser contexts.
+// Worker throws an error for window being undefined.
+// TypeScript throws errors for compiling worker.
 try {
     jasmineSpecIsInBrowser = (window !== undefined);
 }
@@ -136,7 +140,7 @@ function workerProcessor(event, done) {
     console.log('Web Worker TWO: Message received from main script');
     console.log('Web Worker TWO: Posting message back to main script');
     __WEBPACK_IMPORTED_MODULE_0_lodash__["each"](data, function (item) {
-        var workerResult = 'Result: ' + event.data + ' iterated with imported lodash ' + item;
+        var workerResult = 'Result: ' + event.data + ' iteration ' + item + ' with imported lodash.';
         done(workerResult);
     });
 }

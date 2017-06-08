@@ -21,7 +21,6 @@ try {
   jasmineSpecIsInBrowser = false; // We are a web worker!
 }
 
-
 // Worker API
 onmessage = function ( event ) {
 

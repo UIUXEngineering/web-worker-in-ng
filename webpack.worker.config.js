@@ -35,6 +35,8 @@ module.exports = {
     "filename": "[name].js"
   },
 
+  "watch": true,
+
   "module": {
     "rules": [
       {
